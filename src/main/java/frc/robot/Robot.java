@@ -29,7 +29,6 @@ public class Robot extends TimedRobot {
 
   public DriveTrainCharacterizer characterizer = new DriveTrainCharacterizer();
 
-
   boolean characterizerRunning = false;
   
   public Runnable smartDashboardRunnable = new Runnable(){

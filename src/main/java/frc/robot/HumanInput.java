@@ -12,8 +12,6 @@ public class HumanInput {
 		leftStick = new Joystick(1);
 		rightStick = new Joystick(2);
 	}
-
-	}
 	public boolean getQuasiStaticBack() {
 		return rightStick.getRawButton(3);
 	}
