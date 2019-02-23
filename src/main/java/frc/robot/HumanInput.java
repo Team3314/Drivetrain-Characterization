@@ -31,10 +31,10 @@ public class HumanInput {
 		return rightStick.getRawButton(10);
 	}
     public double getLeftThrottle() {
-		return -leftStick.getRawAxis(1);
+		return -leftStick.getRawAxis(1) * Math.abs(leftStick.getRawAxis(1));
 	}
 	public double getRightThrottle() {
-		return -rightStick.getRawAxis(1);
+		return -rightStick.getRawAxis(1)* Math.abs(rightStick.getRawAxis(1));
 	}
 	public boolean getLowGear() {
 		return leftStick.getRawButton(4);
