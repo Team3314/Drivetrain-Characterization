@@ -103,11 +103,11 @@ public class Robot extends TimedRobot {
     else {
       if(HI.getGyrolock()) {
         drive.setDriveMode(DriveMode.GYROLOCK);
-        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
       }
       else {  
         drive.setDriveMode(DriveMode.OPEN_LOOP);
-        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
       if(HI.getHighGear()) {
         drive.setHighGear(true);
