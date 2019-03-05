@@ -46,7 +46,12 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public void zero() {
-      //unimplemented by REV
+      ((CANSparkMax)controller).setEncPosition(0);
+    }
+    @Override
+    public void setDistancePerPulse(double distancePerPulse) {
+        ((CANSparkMax)controller).getEncoder().setPositionConversionFactor(distancePerPulse);
+        ((CANSparkMax)controller).getEncoder().setVelocityConversionFactor(distancePerPulse);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public double getOutputVoltage() {
-        return ((CANSparkMax)controller).getAppliedOutput();
+        return ((CANSparkMax)controller).getAppliedOutput() * ((CANSparkMax)controller).getBusVoltage();
     }
 
     @Override
@@ -103,7 +108,19 @@ public class SparkMax extends SmartSpeedController {
     }
 
     @Override
-    public void setRampRate(double rate) {
-        ((CANSparkMax)controller).setRampRate(rate);
+    public void setOpenLoopRampTime(double rate) {
+        ((CANSparkMax)controller).setOpenLoopRampRate(rate);
     }
+
+    @Override
+    public void setClosedLoopRampTime(double time) {
+        ((CANSparkMax)controller).setClosedLoopRampRate(time);
+    }
+
+    @Override
+    public boolean getReverseLimit() {
+        return false;
+    }
+
+    
 }

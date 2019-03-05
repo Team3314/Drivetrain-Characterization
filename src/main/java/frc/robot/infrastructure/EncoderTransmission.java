@@ -31,8 +31,12 @@ public class EncoderTransmission extends Transmission {
         return encoder.getVelocity();
     }
 
-    public void setRampRate(double rate) {
-        motors[0].setRampRate(rate);
+    public void setOpenLoopRampTime(double time) {
+        motors[0].setOpenLoopRampTime(time);
+    }
+
+    public void setClosedLoopRampTime(double time) {
+        motors[0].setClosedLoopRampTime(time);
     }
     
     public void reset() {
@@ -75,5 +79,11 @@ public class EncoderTransmission extends Transmission {
     }
     public boolean encoderIsSparkMax() {
         return encoder instanceof SparkMax;
+    }
+    public SmartSpeedController getMotor(int motor) {
+        return motors[motor];
+    }
+    public void setEncoderDistancePerPulse(double distancePerPulse) {
+        motors[0].setDistancePerPulse(distancePerPulse);
     }
 }

@@ -6,34 +6,36 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+
 public class Constants {
 
 	public static boolean practiceBot = false;
 
 
 //Conversions	
-		public static int kDriveEncoderCodesPerRev = 42;// AMT-102v = 8192;
+		public static int kDriveEncoderCodesPerRev = 2048;// AMT-102v = 2048;
 		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
-		public static double kRevToInConvFactor = 1;
+		public static double kRioEncoderRevToInConvFactor = 11.211678832116788321167883211679;
 		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
-		public static double kRevToInConvFactorHighGear = 3.578; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
-		public static double kTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
-		public static double kTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
-		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
-		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
+		public static double kRevToInConvFactorHighGear = 3.5781; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
+		public static double kNeoTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
+		public static double kNeoTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
+		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRioEncoderRevToInConvFactor;
+		public static double kDriveTicksToInches = kRioEncoderRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 
-		public static double kElevatorTicksToInches = 0;
+		public static double kElevatorInchesPerTick = 4.4468368947179040128423054179364e-4;//0.97759262293478401818325242307913
 
 		public static int kCANTimeout =0;
 //Drivetrain
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentDuration = 0;
-		public static int kNEODriveCurrentLimit = 80;
+		public static int kNEODriveStallCurrentLimit = 80;
+		public static int kNEODriveFreeCurrentLimit = 20;
 		public static double kDriveDeadband = .1;
 		public static double kDriveOpenLoopRampRate = 0;
 		public static double kDriveVoltageScale = 12.0;
@@ -43,9 +45,52 @@ public class Constants {
 		public static double kMaxSpeed = 5500;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 		public static double kDrivePIDPeriod = .02;
-		public static double kRaisedElevatorDriveRampRate = 1;
+		public static double kRaisedElevatorDriveRampRate = .5;
+		public static final double kDriveRampRate = 0;
 		public static double kRaisedElevatorDriveSpeedCap = kMaxSpeedLowGear;
 		
+
+//Elevator
+		public static int kElevatorCruiseVelocity = (int)(62/ kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
+		public static int kElevatorAcceleration = (int)(120 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
+		public static final int kElevatorSCurveStrength = 0;
+		public static double kElevatorVoltageScale = 12.0;
+		public static final double kElevatorRampTime = .1; 
+		public static final int kElevatorContinuousCurrentLimit = 20;
+		public static final int kElevatorPeakCurrentLimit = 35;
+		public static final int kElevatorPeakCurrentDuration = 200;
+		public static final double kElevatorDeadband = 0;
+		public static final int kMaxElevatorPosition = 10000000;
+		public static final int kMinElevatorPosition = 0;
+		public static final int k775ProFreeSpeedRPM = 18730;
+		public static final double kElevatorGearboxReduction = 1/13;
+		public static final int kElevatorTicksPerRev = 8192;
+		public static final double kMaxElevatorVelocity = 14000; //ticks/100ms
+
+		public static final int kElevatorTolerance = (int)(1 / kElevatorInchesPerTick);
+
+		public static final int kElevatorLowAccelerationThreshold = ((int)(30 / kElevatorInchesPerTick));
+
+		public static final int kElevatorHatchPickup = 0;
+		public static final int kElevatorRaisedHatchPickup = (int)(4 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel2 = (int)(25 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel3 = (int)(55 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel1 = (int)(4 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel2 = (int)(30 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
+
+		public static double kElevator_kP = .1;
+		public static double kElevator_kI = 0;
+		public static double kElevator_kD = 5;
+		public static double kElevator_kF = 1023 / kMaxElevatorVelocity;//11.694760041671591487403907388346; // 1/max velocity * 1023 ( converts to talon native units)
+		public static final int kElevator_kIZone = 0;
+		public static int kElevatorSlot = 0;
+
+//Cargo Intake
+		public static final int kIntakeContinuousCurrentLimit = 0; //last year 15a
+		public static final int kIntakePeakCurrentLimit = 0; //last year 15a
+		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
 		public static double kGyroLock_kP = .01;
@@ -84,13 +129,18 @@ public class Constants {
 		public static double kMotionProfileHeading_kD =0;
 		public static double kMotionProfileHeading_kF = 0;
 		public static double kMotionProfileHeading_kA = 0;
+
+	//Elevator
 		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms
 		public static int kDriveMotionControlTrajectoryPeriod = 10; //ms
 		public static int kDrivetrainAcceleration = (int)(12 * Constants.kFPSToTicksPer100ms);
 		public static int kDrivetrainCruiseVelocity = 0;
-		public static int kPulleyDiameter = 0;
+		public static double kWheelDiameter = 6.125;
+		public static boolean kNEOEncoders = false;
+
+
 
 	//Backward High
 		public static final int kMotionProfileLeftBackHigh_kV = 0;
@@ -144,8 +194,42 @@ public class Constants {
 
 //Pneumatics
     //Gears
-		public static Value kHighGear = Value.kForward;
-		public static Value kLowGear = Value.kReverse;
+		public static Value kHighGear = Value.kReverse;
+		public static Value kLowGear = Value.kForward;
+	
+	//Hatch mechanism
+		public static Value kGripperUp = Value.kReverse;
+		public static Value kGripperDown = Value.kForward;
+		public static Value kSliderIn = Value.kForward;
+		public static Value kSliderOut = Value.kReverse;
+
+	//Cargo Intake	
+		public static final Value kIntakeDown = Value.kReverse;
+		public static final Value kIntakeUp = Value.kForward; 
+		public static final Value kIntakeClimberUp = Value.kReverse;
+		public static final Value kIntakeClimberDown =  Value.kForward;
+		public static final double kCargoSensorVoltageThreshold = 3;
+
+
+		public static final double kRightStopUpAngle = 82;
+
+
+		public static final double kLeftStopUpAngle = 125;
+
+
+		public static final double kRightStopDownAngle = 115;
+
+
+		public static final double kLeftStopDownAngle = 85;
+
+
+		public static final Value kClimberDown = Value.kForward;
+
+
+		public static final Value kClimberUp = Value.kReverse;
+
+
+		
 
 
 }

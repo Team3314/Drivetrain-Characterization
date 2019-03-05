@@ -1,4 +1,4 @@
-#Smooths a value while taking its derivative with respect to time.
+i#Smooths a value while taking its derivative with respect to time.
 smoothDerivative <- function(value, timeMillis, n){
   smoothed <- (value[(n+1):length(value)] - value[1:(length(value)-n)])/((timeMillis[(n+1):length(timeMillis)] - timeMillis[1:(length(timeMillis)-n)])/1000);
   return(c(rep(0, ceiling(n/2)), smoothed, rep(0, floor(n/2))));

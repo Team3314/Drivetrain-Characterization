@@ -23,13 +23,13 @@ import frc.robot.subsystems.Drive.DriveMode;
  */
 public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
   public static HumanInput HI = new HumanInput();
 
 
   public DriveTrainCharacterizer characterizer = new DriveTrainCharacterizer();
 
-  boolean characterizerRunning = false;
+  boolean characterizerRunning = false, lastStart = false, lastStop = false;
   
   public Runnable smartDashboardRunnable = new Runnable(){
   
@@ -49,6 +49,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.resetDriveEncoders();
+    characterizerRunning = false;
+  }
+
+
+  @Override
+  public void disabledPeriodic() {
+    allPeriodic();
   }
 
   @Override
@@ -62,7 +69,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     allPeriodic();
-    
   }
 
   @Override
@@ -83,13 +89,13 @@ public class Robot extends TimedRobot {
       characterizer.setMode(TestMode.STEP_VOLTAGE, Direction.Backward);
 
     // Drive Controls
-    if(HI.getStart()) {
+    if(HI.getStart() && !lastStart) {
       characterizerRunning = true;
       characterizer.initialize();
     }
-    else if(HI.getStop()) {
+    else if(HI.getStop() && !lastStop) {
       characterizerRunning = false;
-      drive.setRampRate(0);
+      drive.setOpenLoopRampTime(0);
     }
     if(characterizerRunning) {
       characterizer.run();
@@ -97,11 +103,11 @@ public class Robot extends TimedRobot {
     else {
       if(HI.getGyrolock()) {
         drive.setDriveMode(DriveMode.GYROLOCK);
-        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
       }
       else {  
         drive.setDriveMode(DriveMode.OPEN_LOOP);
-        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
       if(HI.getHighGear()) {
         drive.setHighGear(true);
@@ -110,6 +116,8 @@ public class Robot extends TimedRobot {
         drive.setHighGear(false);
       }
     }
+    lastStart = HI.getStart();
+    lastStop = HI.getStop();
   }
 
   @Override
@@ -121,7 +129,8 @@ public class Robot extends TimedRobot {
   }
 
   public void outputToSmartDashboard() {
-		drive.outputToSmartDashboard();
+    drive.outputToSmartDashboard();
+    characterizer.outputToSmartDashboard();
   }
 
   public void allPeriodic() {

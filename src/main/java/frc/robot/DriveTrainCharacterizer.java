@@ -14,8 +14,9 @@ public class DriveTrainCharacterizer {
 	}
 	
 	private Drive drive = Robot.drive;
-	private Direction direction;
-	private TestMode mode;
+	private Direction direction = Direction.Forward;
+	private TestMode mode = TestMode.QUASI_STATIC;
+	private double voltageStep = 1.0 / 48.0 / 50.0;
 	double driveSpeed;
 	
 	public void initialize() {
@@ -28,17 +29,20 @@ public class DriveTrainCharacterizer {
 			scale = -1;
 		}
 		if (mode.equals(TestMode.QUASI_STATIC)) {
-            driveSpeed = 1 * scale;
-            drive.setRampRate(80);
+			driveSpeed = 0;
+			voltageStep *= scale;
 		} 
 		else {
             driveSpeed = .5 * scale; //6v
-            drive.setRampRate(0);
+            drive.setOpenLoopRampTime(0);
 		}
 	}
 	
 	public void run() {
-        drive.set(driveSpeed, driveSpeed);
+		if(mode.equals(TestMode.QUASI_STATIC))
+			driveSpeed += voltageStep;
+		drive.set(driveSpeed, driveSpeed);
+
     }
     
     public void setMode(TestMode mode, Direction dir) {
@@ -46,7 +50,12 @@ public class DriveTrainCharacterizer {
         this.mode = mode;
     }
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Left Drive speed FPS", drive.getLeftDriveSpeedInches() / 12);
-        SmartDashboard.putNumber("Right Drive speed FPS", drive.getRightDriveSpeedInches() / 12);
+        SmartDashboard.putNumber("Left Rio Drive speed FPS", drive.getLeftRioDriveSpeedInches() / 12);
+        SmartDashboard.putNumber("Right Rio Drive speed FPS", drive.getRightRioDriveSpeedInches() / 12);
+        SmartDashboard.putNumber("Left NEO Drive speed FPS", drive.getLeftNEODriveSpeedInches() / 12);
+		SmartDashboard.putNumber("Right NEO Drive speed FPS", drive.getRightNEODriveSpeedInches() / 12);
+		SmartDashboard.putString("Mode" ,mode.toString());
+		SmartDashboard.putString("Direction", direction.toString());
+
     }
 }
